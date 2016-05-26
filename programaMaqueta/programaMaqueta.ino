@@ -6,10 +6,10 @@
 
 //******  Includes  ********************************************************************** 
 
-#define rele1 12 //Connexió del relè 1 (obertura de finestra) al pin 12.
-#define rele2 11 //Connexió del relè 2 (ombrejat) al pin 11.
-#define rele3 10 //Connexió del relè 3 (inversió de gir finestra) al pin 10.
-#define rele4 9  //Connexió del relè 4 (inversió de gir ombrejat) al pin 9 .
+#define rele1 12 //Connexió del relè 1 (inversió de gir finestra) al pin 12.
+#define rele2 11 //Connexió del relè 2 (inversió de gir ombrejat) al pin 11.
+#define rele3 10 //Connexió del relè 3 (obertura de finestra) al pin 10.
+#define rele4 9  //Connexió del relè 4 (ombrejat) al pin 9 .
 #define rele5 8  //Connexió del relè 5 (sistema de calefacció) al pin 8.
 #define rele6 7  //Connexió del relè 6 (electrovàlvula goteig) al pin 7.
 #define rele7 6  //Connexió del relè 7 (electrovàlvula difusors) al pin 6.
@@ -86,7 +86,7 @@ void setup() {
   digitalWrite (rele6, HIGH);//S'apaga el relè 6 (Goteig).
   digitalWrite (rele7, HIGH);//S'apaga el relè 7 (Difusors).
   digitalWrite (rele8, HIGH);//S'apaga el relè 8 (Llums).
-  digitalWrite (rele9, HIGH);//S'apaga el relè 9 (Llum indicació).
+  digitalWrite (rele9, LOW);//S'apaga el relè 9 (Llum indicació)*Funciona al revés*.
 
   estatRele1=0;//Determina que la variable Relè 1 està a 0. Actua com a memòria.
   estatRele2=0;//Determina que la variable Relè 2 està a 0. Actua com a memòria.
@@ -177,64 +177,64 @@ void loop() {
     estatRele5=0;//Posa la memória del relè5 a 0.
   }//Tancament de l'if.
   
-  //if ((temperatura > 30)&&(FinalDeCursaInferior)&&( EstatRele1==0 )){// Si la variable 
-    //temperatura és major a 30º, el final de cursa inferior està actiu i el relè 1 està
+  //if ((temperatura > 30)&&(FinalDeCursaInferior)&&( EstatRele3==0 )){// Si la variable 
+    //temperatura és major a 30º, el final de cursa inferior està actiu i el relè 3 està
     //apagat:
-    //digitalWrite (rele1, LOW); //Activa el relè 1 (Obertura de finestra).
-    //estatRele1=1;//Posa la memória del relè1 a 1.
+    //digitalWrite (rele3, LOW); //Activa el relè 3 (Obertura de finestra).
+    //estatRele3=1;//Posa la memória del relè3 a 1.
   //}//Tancament de l'if.
     
-  //if ((finalDeCursaSup)&&(EstatRelè1==1)){//Quan arriba al final de cursa superior i el 
-    //relè 1 està actiu:
-    //digitalWrite (rele1, HIGH); //Apaga el relè 1 (Obertura de finestra).
-    //estatRele1=0;//Posa la memória del relè1 a 0.
+  //if ((finalDeCursaSup)&&(EstatRelè3==1)){//Quan arriba al final de cursa superior i el 
+    //relè 3 està actiu:
+    //digitalWrite (rele3, HIGH); //Apaga el relè 3 (Obertura de finestra).
+    //estatRele3=0;//Posa la memória del relè1 a 0.
   //}//Tancament de l'if.
     
   //if ((temperatura<30)&&(temperatura>=20)&&(finalDeCursaSuperior)&&(estatRele3==0)&&(estatRele1==0){
     //Si la temperatura és menor que 50º, sup. o igual a 27º i el Final de cursa sup. està
     //actiu i els relès 3 i 1 estàn aturats:
-    //digitalWrite (rele3, LOW); //Activa el relè 3 (inversor de gir d'obertura de 
+    //digitalWrite (rele1, LOW); //Activa el relè 1 (inversor de gir d'obertura de 
     //finestra.
+    //digitalWrite (rele3,LOW); //Activa el relè 3 (Tancament de finestra).
     //estatRele3=1;//Posa la memória del relè3 a 1.
     //estatRele4=1;//Posa la memória del relè4 a 1.
-    //digitalWrite (rele1,LOW); //Activa el relè 1 (Tancament de finestra).
   //}//Tancament de l'if.
     
   //if (finalDeCursaInferior)&&(estatRele1==1)&&(estatRele3==1){//Quan s'activa el final 
     //de cursa Inferior i estàn actius els relès 3 i 1:
-    //digitalWrite (rele1, HIGH);//Apaga el relè 3 (inversor de gir d'obertura de 
-    //finestra.
-    //digitalWrite (rele3, HIGH);//Apaga el relè 1 (Tancament de finestra).
+    //digitalWrite (rele3, HIGH);//Apaga el relè 3 (Tancament de finestra).
+    //digitalWrite (rele1, HIGH);//Apaga el relè 1 (inversor de gir d'obertura de 
+    //finestra).
     //estatRele3=0;//Posa la memória del relè3 a 0.
     //estatRele4=0;//Posa la memória del relè4 a 0.
   //}//Tancament de l'if.
     
   //Ombrejat automàtic.*******************************************************************
 
-  if ((lluminositatExterior>350)&&(finalDeCursaFi>350)&&(estatRele2==0)){//Si la variable 
-    //LLuminositat i la variable Final de cursa fí són més petites que 2 i el relè2 està 
+  if ((lluminositatExterior>350)&&(finalDeCursaFi>350)&&(estatRele4==0)){//Si la variable 
+    //LLuminositat i la variable Final de cursa fí són més petites que 2 i el relè4 està 
     //apagat:
-    digitalWrite (rele2, LOW); //Activa el relè 2 (Obertura ombrejat).
+    digitalWrite (rele4, LOW); //Activa el relè 4 (Obertura ombrejat).
     Serial.print ("Ombrejat autom\340tic");//Imprimeix el tex "Ombrejat automàtic" i 
     //salta de línea
     Serial.print ("                                ");//Deixa un espai.
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));//Mostra la
     //hora,els : els minuts, : i els segons.
     Serial.println();//Deixa un espai en blanc.
-    estatRele2=1;//Posa la memória del relè2 a 1.
+    estatRele4=1;//Posa la memória del relè4 a 1.
   }//Tancament de l'if.
   
   else{ //Si no coincideix amb la variable if anterior:
-    digitalWrite (rele2, HIGH);//S'apaga el relè 2.
-    estatRele2=0;//Posa la memória del relè2 a 0.
+    digitalWrite (rele4, HIGH);//S'apaga el relè 4.
+    estatRele2=0;//Posa la memória del relè4 a 0.
   }//Tancament de l'else.
   
   if ((lluminositatExterior<250)&&(lluminositatExterior>230)&&(finalDeCursaFi<230)&&(finalDeCursaInici<225)&&(estatRele4==0)&&(estatRele2==0)){
     //Si la variable  LLuminositat és major a 2 i més petita que tres i el Final de 
     //cursa fí el Final de Cursa Inici són més petits que 2 i els relès 2 i 4 estàn 
     //apagats:
-    digitalWrite (rele4, LOW); //Activa el relè 4 (inversió de gir ombrejat).
-    digitalWrite (rele2, LOW); //Activa el relè 2 (Tancament obrejat)
+    digitalWrite (rele2, LOW); //Activa el relè 2 (inversió de gir ombrejat).
+    digitalWrite (rele4, LOW); //Activa el relè 4 (Tancament obrejat)
     Serial.print ("Recollida autom\340tica del ombrejat");//Imprimeix el tex "Recollida 
     //automàtica del ombrejat" i salta de línea.
     Serial.print ("                 ");//Deixa un espai.
@@ -246,8 +246,8 @@ void loop() {
   }//Tancament de l'if.
   
   else{ //Si no coincideix amb la variable if anterior:
-     digitalWrite (rele2, HIGH); //Desactiva el relè 2 (Tancament obrejat).
-     digitalWrite (rele4, HIGH);//Desactiva el relè 4 (inversió de gir ombrejat).
+     digitalWrite (rele4, HIGH); //Desactiva el relè 4 (Tancament obrejat).
+     digitalWrite (rele2, HIGH);//Desactiva el relè 2 (inversió de gir ombrejat).
      estatRele2=0;//Posa la memória del relè2 a 0.
      estatRele4=0;//Posa la memória del relè4 a 0.
    }//Tancament de l'else.
@@ -268,15 +268,15 @@ void loop() {
   
   if ((lluminositatExterior<5) && (estatRele8==1)){ //Si la variable LLuminositat es
     //inferior a 1 i el relè8 està encés:  
-    digitalWrite (rele9, LOW); //S'encèn el relè 9 (Senyalització).
+    digitalWrite (rele9, HIGH); //S'encèn el relè 9 (Senyalització).*Funciona al revès*
     delay(1000);               //S'espera 1 segón.
-    digitalWrite (rele9, HIGH);//S'apaga el relè 9.
+    digitalWrite (rele9, LOW);//S'apaga el relè 9.*Funciona al revès*
   }//Tancament de l'if.
 
   if ((lluminositatExterior>20 ) && (estatRele8==1 )){ //Si la variable 
     //LLuminositat es més gran que 2 i el relè 8 està actiu:
     digitalWrite (rele8, HIGH);//S'apaga el relè 8.
-    digitalWrite (rele9, HIGH);//S'apaga el relè 9.
+    digitalWrite (rele9, LOW);//S'apaga el relè 9.*Funciona al revès*
     Serial.print ("Desconexi\363 de llums autom\340tics"); //Imprimeix el tex "Llums 
     //automàtics".
     Serial.print ("                    ");//Deixa un espai.
@@ -426,19 +426,19 @@ void loop() {
       estatRele5=0;//Posa la memória del relè5 a 0.
       }//Tancament de l'if.
 
-    if ((n1==7)&&(n2==1) && (estatRele2==0)){//Si n1 es igual a 7, n2 es igual a 1 i el
-      //relè7 es troba apagat:
-      digitalWrite (rele2, LOW);//S'encèn el relè 2 (Ombrejat).
+    if ((n1==7)&&(n2==1) && (estatRele4==0)){//Si n1 es igual a 7, n2 es igual a 1 i el
+      //relè4 es troba apagat:
+      digitalWrite (rele4, LOW);//S'encèn el relè 4 (Ombrejat).
       Serial.println("  Ombrejat: ON ");//Imprimeix el text "Ombrejat:ON" i salta de 
       //línea.
       Serial.println();//Deixa un espai en blanc.
-      estatRele2=1;//Posa la memória del relè2 a 1.
+      estatRele4=1;//Posa la memória del relè2 a 1.
     }//Tancament de l'if.
 
     if ((n1==7)&&(n2==2) && (estatRele2==0) && (estatRele4==0)){//Si n1 es igual a 7, n2 
       //es igual a 1 i els reles 2 i 4 estàn apagats:
-      digitalWrite (rele4, LOW);//S'encèn el relè 4 (Inversor de gir de l'Ombrejat).
-      digitalWrite (rele2, LOW);//S'encèn el relè 2 (Ombrejat).
+      digitalWrite (rele2, LOW);//S'encèn el relè 2 (Inversor de gir de l'Ombrejat).
+      digitalWrite (rele4, LOW);//S'encèn el relè 4 (Ombrejat).
       Serial.println("  Ombrejat: OFF ");//Imprimeix el text "Ombrejat:OFF" i salta de 
       //línea.
       Serial.println();//Deixa un espai en blanc.
@@ -447,25 +447,25 @@ void loop() {
     }//Tancament de l'if.
 
     if ((n1==7)&&(n2==0)){//Si n1 es igual a 7, n2 es igual a 0:
-      digitalWrite (rele2, HIGH);//S'apaga el relè 2 (Ombrejat).
-      digitalWrite (rele4, HIGH);//S'apaga el relè 2 (Ombrejat).
+      digitalWrite (rele4, HIGH);//S'apaga el relè 4 (Ombrejat).
+      digitalWrite (rele2, HIGH);//S'apaga el relè 2 (Inversió de gir de l'Ombrejat).
       estatRele2=0;//Posa la memória del relè2 a 0.
       estatRele4=0;//Posa la memória del relè4 a 0.
     }//Tancament de l'if.
 
-    if ((n1==8) && (n2==1) && (estatRele1==0)){//Si n1 es igual a 8, n2 es igual a 1 i el
-      //relè 1 està apagat:
-      digitalWrite (rele1, LOW);//S'encèn el relè 4 (Inversor de gir de l'Ombrejat).
+    if ((n1==8) && (n2==1) && (estatRele3==0)){//Si n1 es igual a 8, n2 es igual a 1 i el
+      //relè 3 està apagat:
+      digitalWrite (rele3, LOW);//S'encèn el relè 3 (Inversor de gir de l'Ombrejat).
       Serial.println("  Finestra: ON ");//Imprimeix el text "Finestra: ON" i salta de 
       //línea.
       Serial.println();//Deixa un espai en blanc.
-      estatRele1=1;//Posa la memória del relè1 a 1.
+      estatRele3=1;//Posa la memória del relè3 a 1.
     }//Tancament de l'if.
 
     if ((n1==8)&&(n2==2) && (estatRele1==0) && (estatRele3==0)){//Si n1 es igual a 8, n2 
       //es igual a 2 i els relès 1 i 3 estàn apagats:
-      digitalWrite (rele3, LOW);//S'encèn el relè 4 (Inversor de gir de Finestra).
-      digitalWrite (rele1, LOW);//S'encèn el relè 2 (Finestra).
+      digitalWrite (rele1, LOW);//S'encèn el relè 1 (Inversor de gir de Finestra).
+      digitalWrite (rele3, LOW);//S'encèn el relè 3 (Finestra).
       Serial.println("  Finestra: OFF ");//Imprimeix el text "Finestra:OFF" i salta de 
       //línea.
       Serial.println();//Deixa un espai en blanc.
@@ -474,10 +474,10 @@ void loop() {
     }//Tancament de l'if.
 
     if ((n1==8)&&(n2==0)){//Si n1 es igual a 7, n2 es igual a 0:
-      digitalWrite (rele1, HIGH);//S'apaga el relè 1 (Finestra).
-      digitalWrite (rele3, HIGH);//S'apaga el relè 3 (Inversor de gir finestra).
+      digitalWrite (rele3, HIGH);//S'apaga el relè 3 (Finestra).
+      digitalWrite (rele1, HIGH);//S'apaga el relè 1 (Inversor de gir finestra).
       estatRele3=0;//Posa la memória del relè3 a 0.
-      estatRele1=0;//Posa la memória del relè1a 0.
+      estatRele1=0;//Posa la memória del relè1 a 0.
     }//Tancament de l'if.
     
     if (n1==9){//Si n1 es igual a 9:
