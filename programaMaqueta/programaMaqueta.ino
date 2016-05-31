@@ -78,7 +78,7 @@ void setup() {
   setTime (12,00,00,30,04,2016);//Hora, minut, segón, dia, mes i any definit al carregar
   //el programa al Arduino.
 
-  digitalWrite (rele1, HIGH); //Apaga el relè 1 (Obertura de finestra).
+  digitalWrite (rele1, HIGH);//Apaga el relè 1 (Obertura de finestra).
   digitalWrite (rele2, HIGH);//S'apaga el relè 2 (Obertura ombrejat).
   digitalWrite (rele3, HIGH);//Apaga el relè 1 (Inversor de gir finestra).
   digitalWrite (rele4, HIGH);//Desactiva el relè 4 (inversió de gir ombrejat).
@@ -151,7 +151,7 @@ void loop() {
   int finalDeCursaFi = analogRead (LDR3);//Iguala el valor intern
                           //finalDeCursaFi al valor que llegeixi de LDR3.
    
-   //Activació de la calefacció depenent de la temperatura.*******************************
+  //Activació de la calefacció depenent de la temperatura.********************************
   
   if ((temperatura < 15)&&(estatRele5==0)){//Si la variable temperatura és menor a 15º i 
     //el relè5 està aturat:
@@ -162,11 +162,11 @@ void loop() {
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));//Mostra la
     //hora,els : els minuts, : i els segons.
     Serial.println();//Deixa un espai en blanc.
-    estatRele5=1;//Posa la memória del relè5 a 1.
+    estatRele5=2;//Posa la memória del relè5 a memòria 2 (procés automàtic).
   }//Tancament de l'if.
   
-  if ((temperatura>20)&&(estatRele5==1)){//Quan la variable temperatura és superior a 20º
-    //i el relè5 està actiu:
+  if ((temperatura>20)&&(estatRele5==2)){//Quan la variable temperatura és superior a 20º
+    //i el relè5 està en memòria de procés automàtic:
     digitalWrite (rele5, HIGH);//Apaga el relè 5 (Calefacció).
     Serial.print ("Aturada autom\340tica del Calefactor");//Imprimeix el tex "Aturada 
     //automàtica del calefactor.
@@ -176,16 +176,18 @@ void loop() {
     Serial.println();//Deixa un espai en blanc.
     estatRele5=0;//Posa la memória del relè5 a 0.
   }//Tancament de l'if.
+
+  //Control de la finestra.***************************************************************
   
   //if ((temperatura > 30)&&(FinalDeCursaInferior)&&( EstatRele3==0 )){// Si la variable 
     //temperatura és major a 30º, el final de cursa inferior està actiu i el relè 3 està
     //apagat:
     //digitalWrite (rele3, LOW); //Activa el relè 3 (Obertura de finestra).
-    //estatRele3=1;//Posa la memória del relè3 a 1.
+    //estatRele3=2;//Posa la memória del relè3 a 2 (procès automàtic).
   //}//Tancament de l'if.
     
-  //if ((finalDeCursaSup)&&(EstatRelè3==1)){//Quan arriba al final de cursa superior i el 
-    //relè 3 està actiu:
+  //if ((finalDeCursaSup)&&(EstatRelè3==2)){//Quan arriba al final de cursa superior i el 
+    //relè 3 està en memòria de procés automàtic:
     //digitalWrite (rele3, HIGH); //Apaga el relè 3 (Obertura de finestra).
     //estatRele3=0;//Posa la memória del relè1 a 0.
   //}//Tancament de l'if.
@@ -263,18 +265,17 @@ void loop() {
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));//Mostra la
     //hora,els : els minuts, : i els segons..
     Serial.println();//Deixa un espai en blanc.
-    estatRele8=1;//Posa la memória del relè8 a 1.
+    estatRele8=2;//Posa la memória del relè8 a memòria 2.
   }//Tancament de l'if.
   
-  if ((lluminositatExterior<5) && (estatRele8==1)){ //Si la variable LLuminositat es
-    //inferior a 1 i el relè8 està encés:  
+  if (estatRele8==2){ //Si el relè8 està està en memòria de procés automàtic:
     digitalWrite (rele9, HIGH); //S'encèn el relè 9 (Senyalització).*Funciona al revès*
     delay(1000);               //S'espera 1 segón.
     digitalWrite (rele9, LOW);//S'apaga el relè 9.*Funciona al revès*
   }//Tancament de l'if.
 
-  if ((lluminositatExterior>20 ) && (estatRele8==1 )){ //Si la variable 
-    //LLuminositat es més gran que 2 i el relè 8 està actiu:
+  if ((lluminositatExterior>20 ) && (estatRele8==2 )){ //Si la variable 
+    //LLuminositat es més gran que 2 i el relè 8 està en memòria de procés automàtic:
     digitalWrite (rele8, HIGH);//S'apaga el relè 8.
     digitalWrite (rele9, LOW);//S'apaga el relè 9.*Funciona al revès*
     Serial.print ("Desconexi\363 de llums autom\340tics"); //Imprimeix el tex "Llums 
@@ -296,6 +297,10 @@ void loop() {
     Serial.print ("                   ");//Deixa un espai.
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));//Mostra la
     //hora,els : els minuts, : i els segons.
+    estatRele7=2;//Posa la memória del relè7 a 2 (funcionament automàtic).
+  }//Tancament de l'if.
+  
+  if (estatRele7==2){  
     delay (10000);              //S'espera 10 segons.
     digitalWrite (rele7, HIGH); //S'apaga el relè 7.
     Serial.print ("Desconnexi\363 autom\340tica de Difusors");//Imprimeix el tex 
@@ -319,11 +324,11 @@ void loop() {
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));//Mostra la
     //hora,els : els minuts, : i els segons.
     Serial.println();//Deixa un espai en blanc.
-    estatRele6=1;//Posa la memória del relè6 a 1.
+    estatRele6=2;//Posa la memória del relè6 a 2 (funcionament automàtic).
   }//Tancament de l'if.
   
-  if (((hour() * 60 + minute())==fi) && (estatRele6==1)){//Si la hora actual és igual a 
-    //la hora de finalització de reg "fi" i el relè6 es troba actiu:
+  if (((hour() * 60 + minute())==fi) && (estatRele6==2)){//Si la hora actual és igual a 
+    //la hora de finalització de reg "fi" i el relè6 està en memòria de procés automàtic:
     digitalWrite (rele6,HIGH);  //S'apaga el relè 6 (Goteig).
     Serial.print ("Aturada autom\340tica del reg");//Imprimeix el tex "Aturada
     //automàtica del reg" i salta de línea.
@@ -383,7 +388,7 @@ void loop() {
     
     if ((n1==4)&&(n2==0) && (estatRele6==1)){//Si n1 es igual a 4, n2 es igual a 0 i el
       //relè6 es troba actiu:
-      digitalWrite (rele6, HIGH);//S'apaga el relè 6 (Reg per oteig).
+      digitalWrite (rele6, HIGH);//S'apaga el relè 6 (Reg per goteig).
       Serial.println("  Reg de goteig: OFF ");//Imprimeix el text "Reg de goteig:OFF" 
       //i salta de línea.
       Serial.println();//Deixa un espai en blanc.
