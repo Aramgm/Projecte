@@ -141,7 +141,7 @@ void loop() {
   inferior al valor que llegeixi de DTCTR2.*/
    
   //Activació de la calefacció depenent de la temperatura.********************************
-  Serial.println(finalDeCursaInferior);
+  
   if ((temperatura < 15)&&(estatRele[4]==0)){/*Si la variable temperatura és menor a 15º i 
     el relè5 està aturat:*/
     digitalWrite (rele[4], LOW); //Activa el relè 5 (Calefacció).Funciona al revés.
@@ -504,16 +504,6 @@ void loop() {
       
     }//Tancament de l'if.
     
-    if ((estatRele[2]==0)&&(finalDeCursaSuperior==0)){
-      //Si la memòria del relè 2 està a 3 i el final de cursa superior s'activa:
-      digitalWrite (rele[2], HIGH);//S'apaga el relè 2 (Finestra). Funciona al revés.
-      Serial.println("  Finestra: Oberta ");/*Imprimeix el text "Finestra: Oberta" i 
-      salta de línea.*/
-      Serial.println();//Deixa un espai en blanc.
-      estatRele[2]=0;//Posa la memória del relè3 a 1.
-      
-    }//Tancament de l'if.
-    
     if ((n1==8)&&(n2==1)&&(estatRele[0]==0)&&(estatRele[2]==0)&&(finalDeCursaSuperior==0)){
       /*Si n1 es igual a 8, n2 es igual a 1 i els relès 1 i 3 estàn apagats i i el final de 
       cursa superior es troba actiu:*/
@@ -528,20 +518,6 @@ void loop() {
 
     }//Tancament de l'if.
     
-    if ((estatRele[0]==1)&&(estatRele[2]==1)&&(finalDeCursaInferior==0)){
-      /*Si n1 es igual a 8, n2 es igual a 1 i els relès 1 i 3 estàn apagats i i el final de 
-      cursa superior es troba actiu:*/
-      digitalWrite (rele[0], HIGH);/*S'apaga el relè 1 (Inversor de gir de Finestra).Funciona 
-      al revés.*/
-      digitalWrite (rele[2], HIGH);//S'apaga el relè 3 (Finestra). Funciona al revés.
-      Serial.println("  Finestra: Tancada ");/*Imprimeix el text "Finestra:OFF" i salta de 
-      línea.*/
-      Serial.println();//Deixa un espai en blanc.
-      estatRele[2]=0;//Posa la memória del relè3 a 0.
-      estatRele[0]=0;//Posa la memória del relè1 a 0.
-    
-    }//Tancament de l'if.
-
     if ((n1==8)&&(n2==0)){//Si n1 es igual a 7, n2 es igual a 0:
       digitalWrite (rele[2], HIGH);//S'apaga el relè 3 (Finestra). Funciona al revés.
       digitalWrite (rele[0], HIGH);/*S'apaga el relè 1 (Inversor de gir finestra). Funciona 
@@ -560,6 +536,30 @@ void loop() {
     }//Tancament de l'if.
     
   }//Tancament del while.
+
+   if ((estatRele[2]==3)&&(finalDeCursaSuperior==0)){
+      //Si la memòria del relè 2 està a 3 i el final de cursa superior s'activa:
+      digitalWrite (rele[2], HIGH);//S'apaga el relè 2 (Finestra). Funciona al revés.
+      Serial.println("  Finestra: Oberta ");/*Imprimeix el text "Finestra: Oberta" i 
+      salta de línea.*/
+      Serial.println();//Deixa un espai en blanc.
+      estatRele[2]=0;//Posa la memória del relè3 a 1.
+      
+    }//Tancament de l'if.
+
+    if ((estatRele[0]==1)&&(estatRele[2]==1)&&(finalDeCursaInferior==1)){
+      /*Si n1 es igual a 8, n2 es igual a 1 i els relès 1 i 3 estàn apagats i i el final de 
+      cursa superior es troba actiu:*/
+      digitalWrite (rele[0], HIGH);/*S'apaga el relè 1 (Inversor de gir de Finestra).Funciona 
+      al revés.*/
+      digitalWrite (rele[2], HIGH);//S'apaga el relè 3 (Finestra). Funciona al revés.
+      Serial.println("  Finestra: Tancada ");/*Imprimeix el text "Finestra:OFF" i salta de 
+      línea.*/
+      Serial.println();//Deixa un espai en blanc.
+      estatRele[2]=0;//Posa la memória del relè3 a 0.
+      estatRele[0]=0;//Posa la memória del relè1 a 0.
+    
+    }//Tancament de l'if.
   
 }//Tancament del void loop.
 
