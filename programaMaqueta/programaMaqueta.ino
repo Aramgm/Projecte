@@ -41,23 +41,26 @@ const int LDR1 = A0;//Connexió del LDR1 (principal) al pin A0.
 const int LDR2 = A1;//Connexió del LDR2 (inici toldo) al pin A1.
 const int LDR3 = A2; //Connexió del LDR3 (fi toldo) al pin A2.
 
-const int finalDeCursaSuperior = 1; //Connexió final de cursa finestra al pin 1.
-const int finalDeCursaInferior = 3; //Connexió final de cursa finestra al pin 3.
+const int DTCTR1 = 3; //Connexió final de cursa Superior de la finestra al pin 3.
+const int DTCTR2 = 13; //Connexió final de cursa Inferior de la finestra al pin 13.
 
 float n1, n2;// Variables amb coma flotant (punt decimal) per l'entrada manual.
 
 //******  Setup  *************************************************************************
 
 void setup() {
+  
+  Serial.begin(9600); //Inicialitza el port serie.
+  
   for (int i=0; i < 9; i++){
-    pinMode(rele[i],OUTPUT);//Configuració dels relès com a sortida.
-  }
+  pinMode(rele[i],OUTPUT);//Configuració dels relès com a sortida.
+  } //Tancaent del for.
   
   pinMode (LDR1, INPUT); //Configuració del LDR1 com a entrada.
   pinMode (LDR2, INPUT); //Configuració del LDR2 com a entrada.
   pinMode (LDR3, INPUT); //Configuració del LDR3 com a entrada.
-
-  Serial.begin(9600); //Inicialitza el port serie.
+  pinMode (DTCTR1, INPUT);//Configuració del Final de cursa com a entrada.
+  pinMode (DTCTR2, INPUT);//Configuració del Final de cursa com a entrada.
   
   dht.begin();     //Inicialitza la llibreria dht.
 
@@ -121,7 +124,7 @@ void setup() {
 //******  Loop  **************************************************************************
 
 void loop() {
-  
+
   int humitat = dht.readHumidity(); /*Iguala el valor intern humitat a dht. 
   readHumidyty (lector de la humitat).*/
   int temperatura = dht.readTemperature();/*Iguala el valor intern temeratura a dht. 
@@ -132,9 +135,13 @@ void loop() {
   valor que llegeixi de LDR2.*/
   int finalDeCursaFi = analogRead (LDR3);/*Iguala el valor intern finalDeCursaFi al valor 
   que llegeixi de LDR3.*/
+  int finalDeCursaSuperior = digitalRead (DTCTR1);/*Iguala el valor intern final de cursa
+  superior al valor que llegeixi de DTCTR1.*/
+  int finalDeCursaInferior = digitalRead (DTCTR2);/*Iguala el valor intern final de cursa
+  inferior al valor que llegeixi de DTCTR2.*/
    
   //Activació de la calefacció depenent de la temperatura.********************************
-  
+  Serial.println(finalDeCursaInferior);
   if ((temperatura < 15)&&(estatRele[4]==0)){/*Si la variable temperatura és menor a 15º i 
     el relè5 està aturat:*/
     digitalWrite (rele[4], LOW); //Activa el relè 5 (Calefacció).Funciona al revés.
@@ -163,34 +170,46 @@ void loop() {
 
   //Control de la finestra.***************************************************************
   
-  if ((temperatura > 30)&&(finalDeCursaInferior)&&( estatRele[2]==0 )){/* Si la variable 
-    temperatura és major a 30º, el final de cursa inferior està actiu i el relè 3 està
-    apagat:*/
-    digitalWrite (rele[2], LOW); //Activa el relè 3 (Obertura de finestra).Funciona al revés.
+  if ((temperatura > 30)&&(finalDeCursaSuperior ==1)&&( estatRele[2]==0 )){/*Si  
+    la variable temperatura és major a 30º, el final de cursa superior està inactiu i el relè 
+    3 està apagat:*/
+    digitalWrite (rele[2], LOW);//Activa el relè 3 (Obertura de finestra).Funciona al revés.
+    Serial.print ("Obertura autom\340tica de la finestra");/*Imprimeix el tex "Obertura 
+    automàtica de la finestra.*/
+    Serial.print ("                ");//Deixa un espai.
+    Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));/*Mostra la
+    hora,els : els minuts, : i els segons.*/
+    Serial.println();//Deixa un espai en blanc.
     estatRele[2]=2;//Posa la memória del relè3 a 2 (procès automàtic).
     
   }//Tancament de l'if.
     
-  if ((finalDeCursaSuperior)&&(estatRele[2]==2)){/*Quan arriba al final de cursa superior i 
-    el relè 3 està en memòria de procés automàtic:*/
-    digitalWrite (rele[2], HIGH); //Apaga el relè 3 (Obertura de finestra).Funciona al revés.
+  if ((finalDeCursaSuperior==0)&&(estatRele[2]==2)){/*Quan arriba al final de 
+    cursa superior i el relè 3 està en memòria de procés automàtic:*/
+    digitalWrite (rele[2], HIGH);//Apaga el relè 3 (Obertura de finestra).Funciona al revés.
     estatRele[2]=0;//Posa la memória del relè1 a 0.
     
   }//Tancament de l'if.
     
-  if ((temperatura<30)&&(temperatura>=20)&&(finalDeCursaSuperior)&&(estatRele[2]==0)&&(estatRele[0]==0)){
-    /*Si la temperatura és menor que 50º, sup. o igual a 27º i el Final de cursa sup. està
-    actiu i els relès 3 i 1 estàn aturats:*/
+  if ((temperatura<25)&&(finalDeCursaInferior==0)&&(estatRele[2]==0)&&(estatRele[0]==0)){
+    /*Si la temperatura és menor que 25º i el Final de cursa superior està actiu i els relès 
+    3 i 1 estàn aturats:*/
     digitalWrite (rele[0], LOW); /*Activa el relè 1 (inversor de gir d'obertura de finestra.
     Funciona al revés.*/
     digitalWrite (rele[2],LOW); /*Activa el relè 3 (Tancament de finestra). Funciona al 
     revés.*/
+    Serial.print ("Tancament autom\340tic de la finestra");/*Imprimeix el tex "Tancament 
+    automàtic de la finestra.*/
+    Serial.print ("                 ");//Deixa un espai.
+    Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));/*Mostra la
+    hora,els : els minuts, : i els segons.*/
+    Serial.println();//Deixa un espai en blanc.
     estatRele[0]=1;//Posa la memória del relè1 a 1.
     estatRele[2]=1;//Posa la memória del relè3 a 1.
     
   }//Tancament de l'if.
     
-  if ((finalDeCursaInferior)&&(estatRele[0]==1)&&(estatRele[2]==1)){/*Quan s'activa el final 
+  if ((finalDeCursaInferior==1)&&(estatRele[0]==1)&&(estatRele[2]==1)){/*Quan s'activa el final 
     de cursa Inferior i estàn actius els relès 3 i 1:*/
     digitalWrite (rele[2], HIGH);//Apaga el relè 3 (Tancament de finestra).Funciona al revés.
     digitalWrite (rele[0], HIGH);/*Apaga el relè 1 (inversor de gir d'obertura de finestra).
@@ -200,17 +219,17 @@ void loop() {
     
   }//Tancament de l'if.
     
-  //Ombrejat automàtic.*******************************************************************
+  /*Ombrejat automàtic.*******************************************************************
 
   if ((lluminositatExterior>350)&&(finalDeCursaFi>350)&&(estatRele[3]==0)){/*Si la variable 
     LLuminositat i la variable Final de cursa fí són més petites que 2 i el relè4 està 
-    apagat:*/
+    apagat:
     digitalWrite (rele[3], LOW); //Activa el relè 4 (Obertura ombrejat).Funciona al revés.
     Serial.print ("Ombrejat autom\340tic");/*Imprimeix el tex "Ombrejat automàtic" i 
-    salta de línea*/
+    salta de línea
     Serial.print ("                                ");//Deixa un espai.
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));/*Mostra la
-    hora,els : els minuts, : i els segons.*/
+    hora,els : els minuts, : i els segons.
     Serial.println();//Deixa un espai en blanc.
     estatRele[3]=1;//Posa la memória del relè4 a 1.
     
@@ -225,15 +244,15 @@ void loop() {
   if ((lluminositatExterior<250)&&(lluminositatExterior>230)&&(finalDeCursaFi<230)&&(finalDeCursaInici<225)&&(estatRele[3]==0)&&(estatRele[1]==0)){
     /*Si la variable  LLuminositat és major a 2 i més petita que tres i el Final de 
     cursa fí el Final de Cursa Inici són més petits que 2 i els relès 2 i 4 estàn 
-    apagats:*/
+    apagats:
     digitalWrite (rele[1], LOW); /*Activa el relè 2 (inversió de gir ombrejat).Funciona al 
-    revés.*/
+    revés.
     digitalWrite (rele[3], LOW); //Activa el relè 4 (Tancament obrejat). Funciona al revés.
     Serial.print ("Recollida autom\340tica del ombrejat");/*Imprimeix el tex "Recollida 
-    automàtica del ombrejat" i salta de línea.*/
+    automàtica del ombrejat" i salta de línea.
     Serial.print ("                 ");//Deixa un espai.
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));/*Mostra la
-    hora,els : els minuts, : i els segons.*/
+    hora,els : els minuts, : i els segons.
     Serial.println();//Deixa un espai en blanc.
     estatRele[1]=1;//Posa la memória del relè2 a 1.
     estatRele[3]=1;//Posa la memória del relè4 a 1.
@@ -242,14 +261,15 @@ void loop() {
   
   else{ //Si no coincideix amb la variable if anterior:
      digitalWrite (rele[3], HIGH);/*Desactiva el relè 4 (Tancament obrejat).Funciona al 
-     revés.*/
+     revés.
      digitalWrite (rele[1], HIGH);/*Desactiva el relè 2 (inversió de gir ombrejat).Funciona 
-     al revés.*/
+     al revés.
      estatRele[1]=0;//Posa la memória del relè2 a 0.
      estatRele[3]=0;//Posa la memória del relè4 a 0.
      
    }//Tancament de l'else.
-
+  */
+  
   //Llums automàtics.*********************************************************************
     
   if ((lluminositatExterior<5) && (estatRele[7]==0)){ /*Si la variable LLuminositat es
@@ -336,6 +356,7 @@ void loop() {
     Serial.print ("                        ");//Deixa un espai.
     Serial.println(String(hour())+":"+String(minute())+":"+ String(second()));/*Mostra la
     hora,els : els minuts, : i els segons.*/
+    Serial.println();//Deixa un espai en blanc.
     estatRele[5]=0;//Posa la memória del relè6 a 0.
     
   }//Tancament de l'if.
@@ -473,19 +494,29 @@ void loop() {
       
     }//Tancament de l'if.
 
-    if ((n1==8) && (n2==1) && (estatRele[2]==0)){/*Si n1 es igual a 8, n2 es igual a 1 i el
-      relè 3 està apagat:*/
-      digitalWrite (rele[2], LOW);/*S'encèn el relè 3 (Inversor de gir de l'Ombrejat).
-      Funciona al revés.*/
+    if ((n1==8)&&(n2==1)&&(estatRele[2]==0)&&(finalDeCursaSuperior==1)){
+      //Si n1 es igual a 8, n2 es igual a 1 i el relè 3 està apagat:
+      digitalWrite (rele[2], LOW);//S'encèn el relè 2 (Finestra). Funciona al revés.
       Serial.println("  Finestra: ON ");/*Imprimeix el text "Finestra: ON" i salta de 
       línea.*/
       Serial.println();//Deixa un espai en blanc.
-      estatRele[2]=1;//Posa la memória del relè3 a 1.
+      estatRele[2]=3;//Posa la memória del relè3 a 3.
       
     }//Tancament de l'if.
-
-    if ((n1==8)&&(n2==2) && (estatRele[0]==0) && (estatRele[2]==0)){/*Si n1 es igual a 8, n2 
-      es igual a 2 i els relès 1 i 3 estàn apagats:*/
+    
+    if ((estatRele[2]==0)&&(finalDeCursaSuperior==0)){
+      //Si la memòria del relè 2 està a 3 i el final de cursa superior s'activa:
+      digitalWrite (rele[2], HIGH);//S'apaga el relè 2 (Finestra). Funciona al revés.
+      Serial.println("  Finestra: Oberta ");/*Imprimeix el text "Finestra: Oberta" i 
+      salta de línea.*/
+      Serial.println();//Deixa un espai en blanc.
+      estatRele[2]=0;//Posa la memória del relè3 a 1.
+      
+    }//Tancament de l'if.
+    
+    if ((n1==8)&&(n2==1)&&(estatRele[0]==0)&&(estatRele[2]==0)&&(finalDeCursaSuperior==0)){
+      /*Si n1 es igual a 8, n2 es igual a 1 i els relès 1 i 3 estàn apagats i i el final de 
+      cursa superior es troba actiu:*/
       digitalWrite (rele[0], LOW);/*S'encèn el relè 1 (Inversor de gir de Finestra).Funciona 
       al revés.*/
       digitalWrite (rele[2], LOW);//S'encèn el relè 3 (Finestra). Funciona al revés.
@@ -493,8 +524,22 @@ void loop() {
       línea.*/
       Serial.println();//Deixa un espai en blanc.
       estatRele[2]=1;//Posa la memória del relè3 a 1.
-      estatRele[4]=1;//Posa la memória del relè1 a 1.
-      
+      estatRele[0]=1;//Posa la memória del relè1 a 1.
+
+    }//Tancament de l'if.
+    
+    if ((estatRele[0]==1)&&(estatRele[2]==1)&&(finalDeCursaInferior==0)){
+      /*Si n1 es igual a 8, n2 es igual a 1 i els relès 1 i 3 estàn apagats i i el final de 
+      cursa superior es troba actiu:*/
+      digitalWrite (rele[0], HIGH);/*S'apaga el relè 1 (Inversor de gir de Finestra).Funciona 
+      al revés.*/
+      digitalWrite (rele[2], HIGH);//S'apaga el relè 3 (Finestra). Funciona al revés.
+      Serial.println("  Finestra: Tancada ");/*Imprimeix el text "Finestra:OFF" i salta de 
+      línea.*/
+      Serial.println();//Deixa un espai en blanc.
+      estatRele[2]=0;//Posa la memória del relè3 a 0.
+      estatRele[0]=0;//Posa la memória del relè1 a 0.
+    
     }//Tancament de l'if.
 
     if ((n1==8)&&(n2==0)){//Si n1 es igual a 7, n2 es igual a 0:
